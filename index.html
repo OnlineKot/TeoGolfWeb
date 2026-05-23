@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.clarity.ms; connect-src 'self' https://clarity.ms; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
-
+    
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -14,25 +13,34 @@
         })(window, document, "clarity", "script", "wvm11ohnho");
     </script>
 
-    <title>Teo Golf</title>
+    <title>Golf Now - Web Version</title>
     <style>
         body { margin: 0; background: #05080c; color: white; font-family: monospace; overflow: hidden; touch-action: none; }
-        canvas { display: block; }
-        #menu { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
-        .btn { margin: 10px; padding: 15px 30px; background: #1a2a3a; border: 1px solid #00ffcc; color: white; border-radius: 10px; cursor: pointer; font-size: 16px; }
-        .stats { position: absolute; top: 20px; left: 20px; color: #00ffcc; font-size: 20px; pointer-events: none; }
+        #menu { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 90%; max-width: 500px; margin-top: 20px; }
+        .btn { padding: 15px; background: #1a2a3a; border: 1px solid #00ffcc; color: white; border-radius: 10px; cursor: pointer; }
+        .stats { position: absolute; top: 20px; left: 20px; color: #00ffcc; font-size: 18px; pointer-events: none; z-index: 5; }
+        .cheat-panel { position: absolute; bottom: 20px; left: 20px; z-index: 5; }
+        h1 { margin-bottom: 5px; color: white; text-shadow: 0 0 10px green; }
     </style>
 </head>
 <body>
 
-<div class="stats" id="stats">PLN: 0</div>
+<div class="stats" id="stats">PLN: 0 | Sektor: 1</div>
 
 <div id="menu">
     <h1>GOLF NOW</h1>
-    <div id="shop" style="margin-bottom: 20px;">
-        <button class="btn" onclick="buyPowerup()">Kup "Magnes" (500 PLN)</button>
+    <h3>Web Version</h3>
+    <div id="shop" style="display: flex; gap: 10px;">
+        <button class="btn" onclick="buyMagnet()">Magnes (500 PLN)</button>
+        <button class="btn" onclick="buyBoost()">Dopalacz (1000 PLN)</button>
     </div>
-    <div id="sectors"></div>
+    <div class="grid" id="sectors"></div>
+    <p style="color: gray; margin-top: 20px;">Multiplayer: Coming Soon</p>
+</div>
+
+<div class="cheat-panel">
+    <button onclick="toggleCheat()">Terminal</button>
 </div>
 
 <canvas id="game"></canvas>
@@ -40,16 +48,15 @@
 <script>
     let money = parseInt(localStorage.getItem('money')) || 0;
     let sector = parseInt(localStorage.getItem('sector')) || 1;
-    let isPlaying = false;
     
     function updateUI() {
-        document.getElementById('stats').innerText = "PLN: " + money;
+        document.getElementById('stats').innerText = `PLN: ${money} | Sektor: ${sector}`;
         const container = document.getElementById('sectors');
         container.innerHTML = "";
-        for(let i=1; i<=10; i++) {
+        for(let i=1; i<=67; i++) {
             let b = document.createElement('button');
             b.className = 'btn';
-            b.innerText = "Sektor " + i;
+            b.innerText = "S " + i;
             b.disabled = i > sector;
             b.style.opacity = i <= sector ? 1 : 0.3;
             b.onclick = () => startGame(i);
@@ -57,9 +64,19 @@
         }
     }
 
-    function buyPowerup() {
-        if(money >= 500) { money -= 500; alert("Magnes aktywny!"); save(); updateUI(); }
-        else alert("Za mało kasy!");
+    function buyMagnet() {
+        if(money >= 500) { money -= 500; save(); updateUI(); }
+        else alert("Za mało PLN!");
+    }
+    
+    function buyBoost() {
+        if(money >= 1000) { money -= 1000; save(); updateUI(); }
+        else alert("Za mało PLN!");
+    }
+
+    function toggleCheat() {
+        let pin = prompt("Kod hakerski:");
+        if(pin === "1337") { money += 50000; save(); updateUI(); }
     }
 
     function save() {
@@ -69,8 +86,8 @@
 
     function startGame(s) {
         document.getElementById('menu').style.display = 'none';
-        isPlaying = true;
-        // Inicjalizacja gry...
+        console.log("Startuję sektor " + s);
+        // Tutaj wchodzi fizyka, tak samo jak w iOS
     }
 
     updateUI();
